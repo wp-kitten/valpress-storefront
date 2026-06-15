@@ -1,35 +1,68 @@
 :root {
-	--vs-font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-	--vs-bg: #f8fafc;
+	--vs-font: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+	--vs-font-display: "DM Sans", system-ui, sans-serif;
+	--vs-bg: #f4f6f8;
 	--vs-surface: #ffffff;
-	--vs-text: #0f172a;
-	--vs-muted: #64748b;
-	--vs-border: #e2e8f0;
+	--vs-text: #111827;
+	--vs-muted: #6b7280;
+	--vs-border: #e5e7eb;
 	--vs-accent: #0d9488;
 	--vs-accent-dark: #0f766e;
 	--vs-accent-soft: #ccfbf1;
 	--vs-dark: #0f172a;
 	--vs-radius: 1rem;
-	--vs-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+	--vs-radius-sm: 0.65rem;
+	--vs-shadow: 0 12px 40px rgba(15, 23, 42, 0.1);
+	--vs-shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.06);
 	--vs-container: 1200px;
+	--vs-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body.valpress-storefront-theme {
 	font-family: var(--vs-font);
 	background: var(--vs-bg);
 	color: var(--vs-text);
+	-webkit-font-smoothing: antialiased;
 }
 
 .vs-main {
 	min-height: 50vh;
 }
 
+/* Buttons */
+body.valpress-storefront-theme .btn-primary {
+	background: linear-gradient(135deg, var(--vs-accent), var(--vs-accent-dark));
+	border: none;
+	font-weight: 600;
+	box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+	transition: transform var(--vs-transition), box-shadow var(--vs-transition);
+}
+
+body.valpress-storefront-theme .btn-primary:hover,
+body.valpress-storefront-theme .btn-primary:focus {
+	background: linear-gradient(135deg, var(--vs-accent-dark), #115e59);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 20px rgba(13, 148, 136, 0.4);
+}
+
+body.valpress-storefront-theme .btn-outline-primary {
+	border-color: var(--vs-accent);
+	color: var(--vs-accent-dark);
+	font-weight: 600;
+}
+
+body.valpress-storefront-theme .btn-outline-primary:hover {
+	background: var(--vs-accent-soft);
+	border-color: var(--vs-accent);
+	color: var(--vs-accent-dark);
+}
+
 /* Navbar */
 .vs-navbar {
-	background: rgba(255, 255, 255, 0.92);
-	backdrop-filter: blur(12px);
-	border-bottom: 1px solid var(--vs-border);
-	padding-block: 0.85rem;
+	background: rgba(255, 255, 255, 0.88);
+	backdrop-filter: blur(16px);
+	border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+	padding-block: 0.9rem;
 	z-index: 1030;
 }
 
@@ -41,77 +74,114 @@ body.valpress-storefront-theme {
 .vs-brand {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.65rem;
-	font-weight: 700;
+	gap: 0.75rem;
+	font-weight: 800;
+	font-size: 1.1rem;
 	color: var(--vs-text) !important;
 	text-decoration: none;
+	letter-spacing: -0.02em;
 }
 
 .vs-brand-mark {
-	width: 2rem;
-	height: 2rem;
-	border-radius: 0.65rem;
-	background: linear-gradient(135deg, var(--vs-accent), #2563eb);
-	box-shadow: 0 8px 20px rgba(13, 148, 136, 0.35);
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 0.75rem;
+	background: linear-gradient(135deg, var(--vs-accent) 0%, #2563eb 100%);
+	box-shadow: 0 8px 24px rgba(13, 148, 136, 0.4);
+	flex-shrink: 0;
 }
 
 .vs-navbar .nav-link {
 	color: var(--vs-muted);
 	font-weight: 500;
-	padding-inline: 0.85rem !important;
+	padding-inline: 0.9rem !important;
+	border-radius: 999px;
+	transition: color var(--vs-transition), background var(--vs-transition);
 }
 
 .vs-navbar .nav-link.active,
 .vs-navbar .nav-link:hover {
 	color: var(--vs-accent-dark);
+	background: var(--vs-accent-soft);
 }
 
 .vs-nav-search .form-control {
 	border-radius: 999px 0 0 999px;
 	border-color: var(--vs-border);
 	min-width: 10rem;
+	background: var(--vs-bg);
+}
+
+.vs-nav-search .form-control:focus {
+	border-color: var(--vs-accent);
+	box-shadow: none;
 }
 
 .vs-nav-search .btn {
 	border-radius: 0 999px 999px 0;
 	border-color: var(--vs-border);
+	background: var(--vs-bg);
+	color: var(--vs-muted);
+}
+
+.vs-nav-search .btn:hover {
+	background: var(--vs-accent-soft);
+	color: var(--vs-accent-dark);
+	border-color: var(--vs-accent);
 }
 
 .vs-cart-link {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
+	gap: 0.4rem;
 }
 
 .vs-cart-badge {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 1.25rem;
-	height: 1.25rem;
+	min-width: 1.3rem;
+	height: 1.3rem;
 	padding: 0 0.35rem;
 	border-radius: 999px;
 	background: var(--vs-accent);
 	color: #fff;
-	font-size: 0.7rem;
+	font-size: 0.68rem;
 	font-weight: 700;
+	box-shadow: 0 2px 8px rgba(13, 148, 136, 0.5);
 }
 
 /* Hero */
 .vs-hero {
 	background: linear-gradient(135deg, var(--vs-hero-start, #0f172a) 0%, var(--vs-hero-mid, #134e4a) 55%, var(--vs-hero-end, #0d9488) 100%);
 	color: #fff;
-	padding: 4.5rem 0 4rem;
+	padding: 5rem 0 4.5rem;
 	position: relative;
 	overflow: hidden;
+}
+
+.vs-hero::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image:
+		radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
+		radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.14) 0%, transparent 45%),
+		linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+	background-size: auto, auto, 48px 48px, 48px 48px;
+	pointer-events: none;
 }
 
 .vs-hero::after {
 	content: "";
 	position: absolute;
-	inset: 0;
-	background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.12), transparent 45%);
+	bottom: -2px;
+	left: 0;
+	right: 0;
+	height: 4rem;
+	background: linear-gradient(to top, var(--vs-bg), transparent);
 	pointer-events: none;
 }
 
@@ -122,67 +192,178 @@ body.valpress-storefront-theme {
 
 .vs-hero-eyebrow {
 	display: inline-block;
-	padding: 0.35rem 0.85rem;
+	padding: 0.4rem 1rem;
 	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.12);
-	font-size: 0.8rem;
+	background: rgba(255, 255, 255, 0.14);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	font-size: 0.78rem;
 	font-weight: 600;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	margin-bottom: 1rem;
+	margin-bottom: 1.25rem;
 }
 
 .vs-hero-title {
-	font-size: clamp(2rem, 5vw, 3.25rem);
+	font-family: var(--vs-font-display);
+	font-size: clamp(2.25rem, 5.5vw, 3.5rem);
 	font-weight: 800;
-	line-height: 1.1;
-	margin-bottom: 1rem;
+	line-height: 1.08;
+	margin-bottom: 1.25rem;
+	letter-spacing: -0.03em;
 }
 
 .vs-hero-lead {
-	font-size: 1.125rem;
-	color: rgba(255, 255, 255, 0.85);
-	max-width: 38rem;
-	margin-bottom: 1.75rem;
+	font-size: 1.15rem;
+	color: rgba(255, 255, 255, 0.88);
+	max-width: 36rem;
+	margin-bottom: 2rem;
+	line-height: 1.6;
 }
 
 .vs-hero-actions {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	gap: 0.85rem;
 }
 
 .vs-btn-light {
 	background: #fff;
 	color: var(--vs-dark);
 	border: none;
-	font-weight: 600;
+	font-weight: 700;
+	padding-inline: 1.5rem;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .vs-btn-light:hover {
-	background: var(--vs-accent-soft);
+	background: #f0fdfa;
 	color: var(--vs-dark);
+	transform: translateY(-2px);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
 }
 
 .vs-btn-ghost {
-	border: 1px solid rgba(255, 255, 255, 0.35);
+	border: 1.5px solid rgba(255, 255, 255, 0.4);
 	color: #fff;
 	font-weight: 600;
+	padding-inline: 1.5rem;
+	background: rgba(255, 255, 255, 0.06);
 }
 
 .vs-btn-ghost:hover {
-	background: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.14);
+	border-color: rgba(255, 255, 255, 0.6);
 	color: #fff;
+}
+
+.vs-hero-compact {
+	padding: 3.5rem 0 3rem;
+}
+
+.vs-hero-compact::after {
+	height: 2.5rem;
+}
+
+/* Feature strip */
+.vs-features {
+	background: var(--vs-surface);
+	border-bottom: 1px solid var(--vs-border);
+	padding: 1.5rem 0;
+}
+
+.vs-features-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1.25rem;
+}
+
+.vs-feature-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.85rem;
+}
+
+.vs-feature-icon {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: var(--vs-radius-sm);
+	background: var(--vs-accent-soft);
+	color: var(--vs-accent-dark);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.15rem;
+	flex-shrink: 0;
+}
+
+.vs-feature-title {
+	font-weight: 700;
+	font-size: 0.95rem;
+	margin: 0 0 0.15rem;
+}
+
+.vs-feature-text {
+	font-size: 0.85rem;
+	color: var(--vs-muted);
+	margin: 0;
+	line-height: 1.45;
+}
+
+/* Category cards (home) */
+.vs-category-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 1rem;
+}
+
+.vs-category-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 1.5rem 1rem;
+	background: var(--vs-surface);
+	border: 1px solid var(--vs-border);
+	border-radius: var(--vs-radius);
+	text-decoration: none;
+	color: var(--vs-text);
+	transition: transform var(--vs-transition), box-shadow var(--vs-transition), border-color var(--vs-transition);
+}
+
+.vs-category-card:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--vs-shadow-sm);
+	border-color: #99f6e4;
+	color: var(--vs-accent-dark);
+}
+
+.vs-category-card-icon {
+	width: 3rem;
+	height: 3rem;
+	border-radius: 50%;
+	background: var(--vs-accent-soft);
+	color: var(--vs-accent-dark);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.35rem;
+	margin-bottom: 0.75rem;
+}
+
+.vs-category-card-name {
+	font-weight: 700;
+	font-size: 0.95rem;
 }
 
 /* Category nav */
 .vs-category-nav {
 	background: var(--vs-surface);
 	border-bottom: 1px solid var(--vs-border);
-	padding: 0.85rem 0;
+	padding: 0.9rem 0;
 	position: sticky;
 	top: 4.5rem;
 	z-index: 1010;
+	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 .vs-category-nav-inner {
@@ -197,26 +378,28 @@ body.valpress-storefront-theme {
 	display: inline-flex;
 	align-items: center;
 	white-space: nowrap;
-	padding: 0.45rem 0.95rem;
+	padding: 0.5rem 1.1rem;
 	border-radius: 999px;
 	border: 1px solid var(--vs-border);
 	color: var(--vs-muted);
 	text-decoration: none;
-	font-size: 0.9rem;
-	font-weight: 500;
-	transition: all 0.15s ease;
+	font-size: 0.875rem;
+	font-weight: 600;
+	transition: all var(--vs-transition);
+	background: var(--vs-bg);
 }
 
 .vs-category-pill:hover,
 .vs-category-pill.is-active {
 	background: var(--vs-accent-soft);
-	border-color: #99f6e4;
+	border-color: #5eead4;
 	color: var(--vs-accent-dark);
+	box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
 }
 
 /* Sections */
 .vs-section {
-	padding: 3rem 0;
+	padding: 3.5rem 0;
 }
 
 .vs-section-header {
@@ -224,45 +407,91 @@ body.valpress-storefront-theme {
 	justify-content: space-between;
 	align-items: end;
 	gap: 1rem;
-	margin-bottom: 1.75rem;
+	margin-bottom: 2rem;
+	flex-wrap: wrap;
 }
 
 .vs-section-title {
-	font-size: 1.75rem;
-	font-weight: 700;
+	font-family: var(--vs-font-display);
+	font-size: clamp(1.5rem, 3vw, 1.9rem);
+	font-weight: 800;
 	margin: 0;
+	letter-spacing: -0.02em;
 }
 
 .vs-section-subtitle {
 	color: var(--vs-muted);
-	margin: 0.35rem 0 0;
+	margin: 0.4rem 0 0;
+	font-size: 1rem;
+}
+
+/* CTA banner */
+.vs-cta-banner {
+	background: linear-gradient(135deg, var(--vs-dark) 0%, #134e4a 100%);
+	border-radius: calc(var(--vs-radius) + 0.25rem);
+	padding: 2.5rem 2rem;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	position: relative;
+	overflow: hidden;
+}
+
+.vs-cta-banner::before {
+	content: "";
+	position: absolute;
+	right: -2rem;
+	top: -2rem;
+	width: 12rem;
+	height: 12rem;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.06);
+	pointer-events: none;
+}
+
+.vs-cta-banner h2 {
+	font-weight: 800;
+	font-size: 1.5rem;
+	margin: 0 0 0.35rem;
+	letter-spacing: -0.02em;
+}
+
+.vs-cta-banner p {
+	margin: 0;
+	opacity: 0.85;
 }
 
 /* Footer */
 .vs-footer {
 	background: var(--vs-dark);
 	color: #cbd5e1;
-	margin-top: 3rem;
+	margin-top: 4rem;
 }
 
 .vs-footer-brand {
-	font-size: 1.25rem;
-	font-weight: 700;
+	font-size: 1.3rem;
+	font-weight: 800;
 	color: #fff;
-	margin-bottom: 0.75rem;
+	margin-bottom: 0.85rem;
+	letter-spacing: -0.02em;
 }
 
 .vs-footer-text {
 	color: #94a3b8;
 	max-width: 22rem;
+	line-height: 1.6;
 }
 
 .vs-footer-heading {
 	color: #fff;
-	font-size: 0.85rem;
+	font-size: 0.8rem;
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	margin-bottom: 0.85rem;
+	letter-spacing: 0.08em;
+	margin-bottom: 1rem;
+	font-weight: 700;
 }
 
 .vs-footer-links {
@@ -272,12 +501,13 @@ body.valpress-storefront-theme {
 }
 
 .vs-footer-links li + li {
-	margin-top: 0.45rem;
+	margin-top: 0.5rem;
 }
 
 .vs-footer-links a {
 	color: #94a3b8;
 	text-decoration: none;
+	transition: color var(--vs-transition);
 }
 
 .vs-footer-links a:hover {
@@ -290,8 +520,8 @@ body.valpress-storefront-theme {
 }
 
 .vs-footer-bottom {
-	border-top: 1px solid rgba(148, 163, 184, 0.2);
-	padding: 1.25rem 0 1.75rem;
+	border-top: 1px solid rgba(148, 163, 184, 0.15);
+	padding: 1.5rem 0 2rem;
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
@@ -300,24 +530,24 @@ body.valpress-storefront-theme {
 	color: #94a3b8;
 }
 
-.vs-footer-powered {
-	opacity: 0.85;
-}
-
 /* CMS pages */
 .vs-page-content {
 	background: var(--vs-surface);
 	border: 1px solid var(--vs-border);
 	border-radius: var(--vs-radius);
 	padding: 2rem;
-	box-shadow: var(--vs-shadow);
+	box-shadow: var(--vs-shadow-sm);
 }
 
-/* Product grid (loaded on all pages — homepage catalog uses route "home", not shop.*) */
+/* Product grid */
 .vps-product-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(var(--vs-product-grid-min, 240px), 1fr));
-	gap: 1.25rem;
+	gap: 1.5rem;
+}
+
+.vps-product-grid-empty {
+	grid-column: 1 / -1;
 }
 
 .vps-product-card,
@@ -328,30 +558,71 @@ body.valpress-storefront-theme {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	transition: transform 0.18s ease, box-shadow 0.18s ease;
-	box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+	transition: transform var(--vs-transition), box-shadow var(--vs-transition), border-color var(--vs-transition);
+	box-shadow: var(--vs-shadow-sm);
+	position: relative;
 }
 
 .vps-product-card:hover,
 .vs-product-card:hover {
-	transform: translateY(-4px);
+	transform: translateY(-6px);
 	box-shadow: var(--vs-shadow);
+	border-color: #d1fae5;
 }
 
 .vs-product-media {
-	aspect-ratio: 4 / 3;
-	background: #f1f5f9;
+	aspect-ratio: 1 / 1;
+	background: linear-gradient(145deg, #f8fafc, #f1f5f9);
 	overflow: hidden;
+	position: relative;
 }
 
 .vs-product-media img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	transition: transform 0.35s ease;
+}
+
+.vps-product-card:hover .vs-product-media img,
+.vs-product-card:hover .vs-product-media img {
+	transform: scale(1.06);
+}
+
+.vs-product-media-overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(15, 23, 42, 0.5) 0%, transparent 50%);
+	opacity: 0;
+	transition: opacity var(--vs-transition);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding: 1rem;
+}
+
+.vps-product-card:hover .vs-product-media-overlay,
+.vs-product-card:hover .vs-product-media-overlay {
+	opacity: 1;
+}
+
+.vs-product-badge {
+	position: absolute;
+	top: 0.75rem;
+	left: 0.75rem;
+	padding: 0.25rem 0.65rem;
+	border-radius: 999px;
+	background: #ef4444;
+	color: #fff;
+	font-size: 0.72rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	z-index: 2;
 }
 
 .vs-product-body {
-	padding: 1rem 1rem 1.15rem;
+	padding: 1.15rem 1.15rem 1.25rem;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -359,10 +630,11 @@ body.valpress-storefront-theme {
 
 .vps-product-card h3,
 .vs-product-title {
-	font-size: 1.05rem;
-	font-weight: 650;
-	margin: 0 0 0.35rem;
-	line-height: 1.35;
+	font-size: 1rem;
+	font-weight: 700;
+	margin: 0 0 0.4rem;
+	line-height: 1.4;
+	letter-spacing: -0.01em;
 }
 
 .vps-product-card h3 a,
@@ -378,14 +650,27 @@ body.valpress-storefront-theme {
 
 .vps-product-price,
 .vs-product-price {
-	font-size: 1.125rem;
-	font-weight: 700;
+	font-size: 1.2rem;
+	font-weight: 800;
 	color: var(--vs-accent-dark);
-	margin: auto 0 0.85rem;
+	margin: auto 0 0.9rem;
+	letter-spacing: -0.02em;
 }
 
-.vs-hero-compact {
-	padding: 3rem 0 2.5rem;
+.vs-product-price-compare {
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: var(--vs-muted);
+	text-decoration: line-through;
+	margin-left: 0.4rem;
+}
+
+.vps-product-card .btn,
+.vs-product-card .btn {
+	align-self: flex-start;
+	border-radius: 999px;
+	padding-inline: 1.15rem;
+	font-weight: 600;
 }
 
 /* Shop breadcrumbs & toolbar */
@@ -396,7 +681,7 @@ body.valpress-storefront-theme {
 }
 
 .vs-shop-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
-	color: #94a3b8;
+	color: #9ca3af;
 }
 
 .vs-shop-breadcrumb .breadcrumb-item a {
@@ -410,7 +695,7 @@ body.valpress-storefront-theme {
 
 .vs-shop-breadcrumb .breadcrumb-item.active {
 	color: var(--vs-text);
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .vs-shop-toolbar-main {
@@ -424,5 +709,20 @@ body.valpress-storefront-theme {
 @media (max-width: 991.98px) {
 	.vs-category-nav {
 		top: 3.75rem;
+	}
+
+	.vs-hero {
+		padding: 3.5rem 0 3rem;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.vs-features-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.vs-cta-banner {
+		text-align: center;
+		justify-content: center;
 	}
 }

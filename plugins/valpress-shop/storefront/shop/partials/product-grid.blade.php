@@ -8,9 +8,15 @@
 
 <div class="vps-product-grid">
     @forelse($products as $product)
-        @php $variant = $product->defaultVariant; @endphp
+        @php
+            $variant = $product->defaultVariant;
+            $onSale = $variant && $variant->compare_at_price && (float) $variant->compare_at_price > (float) $variant->price;
+        @endphp
         <article class="vps-product-card vs-product-card">
-            <a href="{{ route('shop.show', $product) }}" class="vs-product-media d-block">
+            <a href="{{ route('shop.show', $product) }}" class="vs-product-media d-block text-decoration-none">
+                @if($onSale)
+                    <span class="vs-product-badge">{{ __('Sale') }}</span>
+                @endif
                 @if($product->imageUrl())
                     <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" loading="lazy">
                 @else
@@ -18,11 +24,14 @@
                         <i class="bi bi-image fs-1"></i>
                     </div>
                 @endif
+                <span class="vs-product-media-overlay">
+                    <span class="btn btn-sm btn-light">{{ __('View product') }}</span>
+                </span>
             </a>
             <div class="vs-product-body">
                 @if($product->categories->isNotEmpty())
-                    <div class="small text-uppercase fw-semibold text-muted mb-1" style="letter-spacing:0.04em;">
-                        {{ $product->categories->pluck('name')->join(' · ') }}
+                    <div class="small text-uppercase fw-semibold text-muted mb-1" style="letter-spacing:0.05em;">
+                        {{ $product->categories->pluck('name')->first() }}
                     </div>
                 @endif
                 <h3 class="vs-product-title">
@@ -33,6 +42,9 @@
                 @endif
                 <div class="vs-product-price">
                     {{ $variant ? \Plugins\ValPressShop\Support\Money::format($variant->price) : '—' }}
+                    @if($onSale)
+                        <span class="vs-product-price-compare">{{ \Plugins\ValPressShop\Support\Money::format($variant->compare_at_price) }}</span>
+                    @endif
                 </div>
                 <a href="{{ route('shop.show', $product) }}" class="btn btn-sm btn-primary">
                     {{ __('valpress-shop::messages.view_product') }}
@@ -40,8 +52,8 @@
             </div>
         </article>
     @empty
-        <div class="col-12">
-            <div class="alert alert-light border text-center py-5">
+        <div class="vps-product-grid-empty">
+            <div class="alert alert-light border text-center py-5 mb-0">
                 <i class="bi bi-box-seam fs-1 text-muted d-block mb-3"></i>
                 <p class="text-muted mb-0">{{ __('valpress-shop::messages.no_products_found') }}</p>
             </div>
@@ -49,7 +61,7 @@
     @endforelse
 </div>
 
-@if(method_exists($products, 'links'))
+@if(empty($hidePagination) && method_exists($products, 'links'))
 <div class="mt-4 d-flex justify-content-center">
     {{ $products->links() }}
 </div>

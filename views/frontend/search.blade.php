@@ -40,7 +40,7 @@
                         </span>
                     </div>
 
-                    @include('valpress-shop::storefront.shop.partials.product-grid', ['products' => $products])
+                    @include('valpress-shop::storefront.shop.partials.product-grid', ['products' => $products, 'hidePagination' => true])
 
                     <div class="mt-4 d-flex justify-content-center">
                         {{ $products->links() }}

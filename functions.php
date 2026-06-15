@@ -243,10 +243,17 @@ add_action( 'valpress_enqueue_scripts', function (): void {
 	);
 
 	ScriptManager::enqueueStyle(
+		'valpress-storefront-fonts',
+		'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap',
+		[],
+		'1.2.0'
+	);
+
+	ScriptManager::enqueueStyle(
 		'valpress-storefront',
 		asset( 'themes/valpress-storefront/res/css/storefront.css' ),
-		[],
-		'1.0.2'
+		[ 'valpress-storefront-fonts' ],
+		'1.2.0'
 	);
 
 	if ( valpress_storefront_should_load_shop_styles() ) {
@@ -254,9 +261,17 @@ add_action( 'valpress_enqueue_scripts', function (): void {
 			'valpress-storefront-shop',
 			asset( 'themes/valpress-storefront/res/css/shop.css' ),
 			[ 'valpress-storefront' ],
-			'1.0.2'
+			'1.2.0'
 		);
 	}
+
+	ScriptManager::enqueueScript(
+		'valpress-storefront',
+		asset( 'themes/valpress-storefront/res/js/storefront.js' ),
+		[],
+		'1.2.0',
+		true
+	);
 } );
 
 add_filter( 'body_classes', function ( array $classes ): array {

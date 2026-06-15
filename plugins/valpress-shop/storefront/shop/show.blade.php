@@ -23,15 +23,12 @@
                         'label' => $product->name,
                         'url' => '',
                     ];
+
+                    $variant = $product->defaultVariant ?? $product->variants->first();
+                    $onSale = $variant && $variant->compare_at_price && (float) $variant->compare_at_price > (float) $variant->price;
                 @endphp
 
                 @include('valpress-storefront::partials.shop-breadcrumb', ['items' => $breadcrumbItems])
-
-                <h1 class="h2 mt-4 mb-1">{{ $product->name }}</h1>
-
-                @if($product->categories->isNotEmpty())
-                    <div class="small text-muted">{{ $product->categories->pluck('name')->join(', ') }}</div>
-                @endif
             </div>
 
             @if(Route::has('cart.index'))
@@ -46,19 +43,36 @@
                 @if($product->imageUrl())
                     <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}">
                 @else
-                    <div class="d-flex align-items-center justify-content-center p-5 text-muted">
-                        <i class="bi bi-image fs-1"></i>
+                    <div class="d-flex align-items-center justify-content-center p-5 text-muted" style="min-height:320px;">
+                        <i class="bi bi-image display-4"></i>
                     </div>
                 @endif
             </div>
 
             <div class="vs-product-detail-panel">
-                @if($product->short_description)
-                    <p class="lead">{{ $product->short_description }}</p>
+                @if($product->categories->isNotEmpty())
+                    <div class="small text-uppercase fw-semibold text-muted mb-2" style="letter-spacing:0.05em;">
+                        {{ $product->categories->pluck('name')->join(' · ') }}
+                    </div>
                 @endif
 
-                @if($product->description)
-                    <div class="mb-4 text-muted">{!! nl2br(e($product->description)) !!}</div>
+                <h1 class="h2 fw-bold mb-3">{{ $product->name }}</h1>
+
+                @if($product->short_description)
+                    <p class="lead text-muted mb-4">{{ $product->short_description }}</p>
+                @endif
+
+                @if(!$product->isVariable() || $product->variants->count() <= 1)
+                    @if($variant)
+                        <div class="vs-product-detail-price-block">
+                            <div class="vs-product-price">
+                                {{ \Plugins\ValPressShop\Support\Money::format($variant->price) }}
+                                @if($onSale)
+                                    <span class="vs-product-price-compare">{{ \Plugins\ValPressShop\Support\Money::format($variant->compare_at_price) }}</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 @endif
 
                 <form action="{{ route('cart.add') }}" method="POST" class="row g-3 align-items-end">
@@ -66,30 +80,24 @@
 
                     @if($product->isVariable() && $product->variants->count() > 1)
                         <div class="col-12">
-                            <label for="variant_id" class="form-label">{{ __('valpress-shop::messages.select_variant') }}</label>
-                            <select name="variant_id" id="variant_id" class="form-select" required>
-                                @foreach($product->variants as $variant)
-                                    <option value="{{ $variant->id }}">
-                                        {{ $variant->displayName() }} — {{ \Plugins\ValPressShop\Support\Money::format($variant->price) }}
+                            <label for="variant_id" class="form-label fw-semibold">{{ __('valpress-shop::messages.select_variant') }}</label>
+                            <select name="variant_id" id="variant_id" class="form-select form-select-lg" required>
+                                @foreach($product->variants as $v)
+                                    <option value="{{ $v->id }}">
+                                        {{ $v->displayName() }} — {{ \Plugins\ValPressShop\Support\Money::format($v->price) }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                     @else
-                        @php $variant = $product->defaultVariant ?? $product->variants->first(); @endphp
                         @if($variant)
                             <input type="hidden" name="variant_id" value="{{ $variant->id }}">
-                            <div class="col-12">
-                                <div class="vs-product-price h3 mb-0">
-                                    {{ \Plugins\ValPressShop\Support\Money::format($variant->price) }}
-                                </div>
-                            </div>
                         @endif
                     @endif
 
                     <div class="col-sm-4">
-                        <label for="quantity" class="form-label">{{ __('valpress-shop::messages.qty') }}</label>
-                        <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="99">
+                        <label for="quantity" class="form-label fw-semibold">{{ __('valpress-shop::messages.qty') }}</label>
+                        <input type="number" name="quantity" id="quantity" class="form-control form-control-lg" value="1" min="1" max="99">
                     </div>
                     <div class="col-sm-8">
                         <button type="submit" class="btn btn-primary btn-lg w-100">
@@ -97,6 +105,19 @@
                         </button>
                     </div>
                 </form>
+
+                <div class="vs-product-trust">
+                    <span class="vs-product-trust-item"><i class="bi bi-truck"></i>{{ __('Fast shipping') }}</span>
+                    <span class="vs-product-trust-item"><i class="bi bi-shield-check"></i>{{ __('Secure payment') }}</span>
+                    <span class="vs-product-trust-item"><i class="bi bi-arrow-repeat"></i>{{ __('Easy returns') }}</span>
+                </div>
+
+                @if($product->description)
+                    <div class="mt-4 pt-4 border-top">
+                        <h2 class="h6 fw-bold text-uppercase mb-3" style="letter-spacing:0.05em;">{{ __('Description') }}</h2>
+                        <div class="text-muted">{!! nl2br(e($product->description)) !!}</div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

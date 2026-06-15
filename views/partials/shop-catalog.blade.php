@@ -1,13 +1,14 @@
 @php
     $title = $title ?? ($category->name ?? ($page->post_title ?? ($post->post_title ?? __('valpress-shop::messages.shop'))));
     $lead = $lead ?? ($category->description ?? ($page->post_excerpt ?? ($post->post_excerpt ?? __('valpress-shop::messages.shop_archive_intro'))));
+    $eyebrow = $eyebrow ?? ($category->name ?? __('Shop catalog'));
 @endphp
 
 <section class="vs-hero vs-hero-compact">
     <div class="container">
         <div class="row align-items-center g-4">
             <div class="col-lg-8">
-                <span class="vs-hero-eyebrow">{{ __('New collection') }}</span>
+                <span class="vs-hero-eyebrow">{{ $eyebrow }}</span>
                 <h1 class="vs-hero-title">{{ $title }}</h1>
                 @if($lead)
                     <p class="vs-hero-lead mb-0">{{ $lead }}</p>
