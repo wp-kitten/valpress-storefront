@@ -267,13 +267,27 @@ add_filter( 'valpress_after_navbar_menu', function ( string $html ): string {
 } );
 
 add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
+	if ( !Route::has( 'admin.storefront.settings' ) ) {
+		return $items;
+	}
+
 	$items[ 'storefront' ] = [
 		'id' => 'storefront',
 		'title' => __( 'Storefront' ),
+		'url' => '#',
+		'icon' => 'bi-shop-window',
+		'order' => 31,
+		'parent' => null,
+		'permission' => 'manage_themes',
+	];
+
+	$items[ 'storefront_settings' ] = [
+		'id' => 'storefront_settings',
+		'title' => __( 'Settings' ),
 		'url' => fn () => route( 'admin.storefront.settings' ),
 		'icon' => 'bi-circle',
 		'order' => 5,
-		'parent' => 'themes',
+		'parent' => 'storefront',
 		'permission' => 'manage_themes',
 	];
 
