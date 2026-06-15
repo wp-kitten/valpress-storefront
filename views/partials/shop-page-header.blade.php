@@ -11,7 +11,7 @@
 
 @include('valpress-storefront::partials.category-nav')
 
-<div class="vs-shop-toolbar mb-4">
+<div class="vs-shop-toolbar mt-2 mb-4">
     <div class="vs-shop-toolbar-main">
         @if($isCategory)
             @include('valpress-storefront::partials.shop-breadcrumb', [
@@ -22,7 +22,7 @@
             ])
         @endif
 
-        <h1 class="h2 mb-1">{{ $pageTitle }}</h1>
+        <h1 class="h2 mt-4 mb-1">{{ $pageTitle }}</h1>
 
         @if($pageLead)
             <p class="text-muted mb-0">{{ $pageLead }}</p>

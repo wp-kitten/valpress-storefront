@@ -4,7 +4,7 @@
     <div class="vps-shop vs-shop">
         @include('valpress-storefront::partials.category-nav')
 
-        <div class="vs-shop-toolbar mb-4">
+        <div class="vs-shop-toolbar mt-2 mb-4">
             <div class="vs-shop-toolbar-main">
                 @php
                     $breadcrumbItems = [
@@ -27,7 +27,7 @@
 
                 @include('valpress-storefront::partials.shop-breadcrumb', ['items' => $breadcrumbItems])
 
-                <h1 class="h2 mb-1 mt-1">{{ $product->name }}</h1>
+                <h1 class="h2 mt-4 mb-1">{{ $product->name }}</h1>
 
                 @if($product->categories->isNotEmpty())
                     <div class="small text-muted">{{ $product->categories->pluck('name')->join(', ') }}</div>
