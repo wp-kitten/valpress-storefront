@@ -394,7 +394,7 @@ class FrontendController extends Controller
 
 	public function search( Request $request ): \Illuminate\Contracts\View\View|Factory|View
 	{
-		$query = $request->get( 's' );
+		$query = trim( (string)$request->get( 's', '' ) );
 		$postsPerPage = (int)Setting::get( 'posts_per_page', 10 );
 		$locale = App::getLocale();
 
@@ -403,19 +403,27 @@ class FrontendController extends Controller
 			->where( function ( $q ) {
 				$q->whereNull( 'published_at' )
 					->orWhere( 'published_at', '<=', now() );
-			} )
-			->where( function ( $q ) use ( $query ) {
+			} );
+
+		if ( $query !== '' ) {
+			$postsQuery->where( function ( $q ) use ( $query ) {
 				$q->where( 'post_title', 'like', "%{$query}%" )
 					->orWhere( 'post_content', 'like', "%{$query}%" );
 			} );
+		}
 
 		$postsQuery = apply_filters( 'valpress_filter_by_locale', $postsQuery, 'post', $locale );
 
-		$posts = $postsQuery->latest()->paginate( $postsPerPage );
+		$posts = $postsQuery->latest()->paginate( $postsPerPage )->appends( [ 's' => $query ] );
+		$products = valpress_storefront_search_products( $query );
+		if ( $products !== null ) {
+			$products->appends( [ 's' => $query ] );
+		}
 		$allCategories = Category::all();
 
 		$template = $this->themeManager->getTemplate( [ 'search', 'index', 'frontend.search' ] );
-		return view( $template ?: 'frontend.search', compact( 'posts', 'query', 'allCategories' ) );
+
+		return view( $template ?: 'frontend.search', compact( 'posts', 'products', 'query', 'allCategories' ) );
 	}
 
 	public function saveBlogSettings( Request $request )

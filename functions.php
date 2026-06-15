@@ -192,6 +192,31 @@ if ( !function_exists( 'valpress_storefront_featured_products' ) ) {
 	}
 }
 
+if ( !function_exists( 'valpress_storefront_search_products' ) ) {
+	/**
+	 * Search published shop products when the shop plugin is available.
+	 */
+	function valpress_storefront_search_products( string $query, ?int $perPage = null ): ?\Illuminate\Contracts\Pagination\LengthAwarePaginator
+	{
+		$query = trim( $query );
+		if ( $query === '' || !valpress_storefront_shop_available() ) {
+			return null;
+		}
+
+		$searchServiceClass = 'Plugins\ValPressShop\Services\ProductSearchService';
+		if ( !class_exists( $searchServiceClass ) ) {
+			return null;
+		}
+
+		$perPage ??= max( 1, min( 100, (int)valpress_storefront_setting( 'products_per_page', 15 ) ) );
+
+		return app( $searchServiceClass )->search( [
+			'q' => $query,
+			'per_page' => $perPage,
+		] );
+	}
+}
+
 if ( !function_exists( 'valpress_storefront_favicon' ) ) {
 	function valpress_storefront_favicon(): string
 	{
