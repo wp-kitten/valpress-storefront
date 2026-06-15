@@ -10,7 +10,9 @@
                 <ul class="vs-footer-links">
                     @if(valpress_storefront_shop_available())
                         <li><a href="{{ valpress_storefront_catalog_url() }}">{{ __('Shop') }}</a></li>
-                        <li><a href="{{ route('cart.index') }}">{{ __('valpress-shop::messages.cart') }}</a></li>
+                        @if(Route::has('cart.index'))
+                            <li><a href="{{ route('cart.index') }}">{{ __('valpress-shop::messages.cart') }}</a></li>
+                        @endif
                         @auth
                             @if(Route::has('shop.account.index'))
                                 <li><a href="{{ route('shop.account.index') }}">{{ __('valpress-shop::messages.my_account') }}</a></li>
@@ -33,7 +35,9 @@
                     <h6 class="vs-footer-heading">{{ __('Categories') }}</h6>
                     <ul class="vs-footer-links vs-footer-links-columns">
                         @foreach(valpress_storefront_shop_categories()->take((int) valpress_storefront_setting('footer_categories_count', 6)) as $cat)
-                            <li><a href="{{ route('shop.category', $cat) }}">{{ $cat->name }}</a></li>
+                            @if(Route::has('shop.category'))
+                                <li><a href="{{ route('shop.category', $cat) }}">{{ $cat->name }}</a></li>
+                            @endif
                         @endforeach
                     </ul>
                 </div>

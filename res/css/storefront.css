@@ -30,6 +30,12 @@ body.valpress-storefront-theme {
 	backdrop-filter: blur(12px);
 	border-bottom: 1px solid var(--vs-border);
 	padding-block: 0.85rem;
+	z-index: 1030;
+}
+
+.vs-navbar .dropdown-menu,
+.vs-navbar .megamenu-content {
+	z-index: 1040;
 }
 
 .vs-brand {
@@ -176,7 +182,7 @@ body.valpress-storefront-theme {
 	padding: 0.85rem 0;
 	position: sticky;
 	top: 4.5rem;
-	z-index: 1020;
+	z-index: 1010;
 }
 
 .vs-category-nav-inner {
@@ -380,6 +386,39 @@ body.valpress-storefront-theme {
 
 .vs-hero-compact {
 	padding: 3rem 0 2.5rem;
+}
+
+/* Shop breadcrumbs & toolbar */
+.vs-shop-breadcrumb .breadcrumb {
+	--bs-breadcrumb-divider: '›';
+	margin-bottom: 0;
+	font-size: 0.875rem;
+}
+
+.vs-shop-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+	color: #94a3b8;
+}
+
+.vs-shop-breadcrumb .breadcrumb-item a {
+	color: var(--vs-muted);
+	text-decoration: none;
+}
+
+.vs-shop-breadcrumb .breadcrumb-item a:hover {
+	color: var(--vs-accent-dark);
+}
+
+.vs-shop-breadcrumb .breadcrumb-item.active {
+	color: var(--vs-text);
+	font-weight: 500;
+}
+
+.vs-shop-toolbar-main {
+	min-width: 0;
+}
+
+.vs-shop-result-count {
+	font-weight: 500;
 }
 
 @media (max-width: 991.98px) {

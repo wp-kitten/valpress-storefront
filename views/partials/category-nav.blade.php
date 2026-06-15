@@ -1,6 +1,10 @@
 @php
     $categories = valpress_storefront_shop_categories();
-    $activeSlug = isset($category) ? $category->slug : null;
+    $activeSlug = isset($category)
+        ? $category->slug
+        : (isset($product) && $product->categories->isNotEmpty()
+            ? $product->categories->first()->slug
+            : null);
 @endphp
 
 @if($categories->isNotEmpty())
@@ -11,9 +15,11 @@
                     {{ __('All products') }}
                 </a>
                 @foreach($categories as $cat)
-                    <a href="{{ route('shop.category', $cat) }}" class="vs-category-pill @if($activeSlug === $cat->slug) is-active @endif">
-                        {{ $cat->name }}
-                    </a>
+                    @if(Route::has('shop.category'))
+                        <a href="{{ route('shop.category', $cat) }}" class="vs-category-pill @if($activeSlug === $cat->slug) is-active @endif">
+                            {{ $cat->name }}
+                        </a>
+                    @endif
                 @endforeach
             </div>
         </div>

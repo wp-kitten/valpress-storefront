@@ -23,15 +23,8 @@
 @endsection
 
 @section('storefront_content')
-    @if(valpress_storefront_shop_available() && valpress_storefront_setting_bool('show_featured_products'))
-        @php
-            $featured = \Plugins\ValPressShop\Models\Product::query()
-                ->published()
-                ->with(['defaultVariant', 'categories'])
-                ->latest()
-                ->limit((int) valpress_storefront_setting('featured_products_count', 8))
-                ->get();
-        @endphp
+    @if(valpress_storefront_shop_available())
+        @php($featured = valpress_storefront_featured_products())
 
         @if($featured->isNotEmpty())
             @include('valpress-storefront::partials.category-nav')

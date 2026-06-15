@@ -5,18 +5,40 @@
         @include('valpress-storefront::partials.category-nav')
 
         <div class="vs-shop-toolbar mb-4">
-            <div>
-                <a href="{{ valpress_storefront_catalog_url() }}" class="small text-muted text-decoration-none">
-                    <i class="bi bi-arrow-left me-1"></i>{{ __('valpress-shop::messages.back_to_shop') }}
-                </a>
+            <div class="vs-shop-toolbar-main">
+                @php
+                    $breadcrumbItems = [
+                        ['label' => __('Shop'), 'url' => valpress_storefront_catalog_url()],
+                    ];
+
+                    if ($product->categories->isNotEmpty() && Route::has('shop.category')) {
+                        $primaryCategory = $product->categories->first();
+                        $breadcrumbItems[] = [
+                            'label' => $primaryCategory->name,
+                            'url' => route('shop.category', $primaryCategory),
+                        ];
+                    }
+
+                    $breadcrumbItems[] = [
+                        'label' => $product->name,
+                        'url' => '',
+                    ];
+                @endphp
+
+                @include('valpress-storefront::partials.shop-breadcrumb', ['items' => $breadcrumbItems])
+
                 <h1 class="h2 mb-1 mt-1">{{ $product->name }}</h1>
+
                 @if($product->categories->isNotEmpty())
                     <div class="small text-muted">{{ $product->categories->pluck('name')->join(', ') }}</div>
                 @endif
             </div>
-            <a href="{{ route('cart.index') }}" class="btn btn-outline-primary">
-                <i class="bi bi-bag me-1"></i>{{ __('valpress-shop::messages.view_cart') }}
-            </a>
+
+            @if(Route::has('cart.index'))
+                <a href="{{ route('cart.index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-bag me-1"></i>{{ __('valpress-shop::messages.view_cart') }}
+                </a>
+            @endif
         </div>
 
         <div class="vs-product-detail">

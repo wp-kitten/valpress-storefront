@@ -4,10 +4,8 @@ use App\Core\ScriptManager;
 use App\Core\ValPress;
 use App\Models\Post;
 use App\Models\Setting;
-use Plugins\ValPressShop\Bootstrap\PageArchiveIntegration;
-use Plugins\ValPressShop\Models\Category;
-use Plugins\ValPressShop\Plugin;
-use Plugins\ValPressShop\Services\CartService;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 use Themes\ValpressStorefront\StorefrontSettings;
 
 ValPress::registerViews( __DIR__ . '/views', 'valpress-storefront' );
@@ -26,10 +24,71 @@ if ( !function_exists( 'valpress_storefront_setting_bool' ) ) {
 	}
 }
 
+if ( !function_exists( 'valpress_storefront_shop_plugin_class' ) ) {
+	function valpress_storefront_shop_plugin_class(): ?string
+	{
+		$class = 'Plugins\ValPressShop\Plugin';
+
+		return class_exists( $class ) ? $class : null;
+	}
+}
+
 if ( !function_exists( 'valpress_storefront_shop_available' ) ) {
 	function valpress_storefront_shop_available(): bool
 	{
-		return class_exists( Plugin::class ) && Plugin::isEnabled();
+		if ( !is_plugin_active( 'valpress-shop' ) ) {
+			return false;
+		}
+
+		$pluginClass = valpress_storefront_shop_plugin_class();
+		if ( $pluginClass === null ) {
+			return false;
+		}
+
+		if ( !$pluginClass::isEnabled() ) {
+			return false;
+		}
+
+		return Route::has( 'shop.index' );
+	}
+}
+
+if ( !function_exists( 'valpress_storefront_shop_archive_type' ) ) {
+	function valpress_storefront_shop_archive_type(): ?string
+	{
+		if ( !valpress_storefront_shop_available() ) {
+			return null;
+		}
+
+		$class = 'Plugins\ValPressShop\Bootstrap\PageArchiveIntegration';
+		if ( class_exists( $class ) ) {
+			return $class::ARCHIVE_TYPE;
+		}
+
+		return apply_filters( 'valpress_storefront_shop_archive_type', 'product' );
+	}
+}
+
+if ( !function_exists( 'valpress_storefront_is_home_shop_archive' ) ) {
+	function valpress_storefront_is_home_shop_archive(): bool
+	{
+		$archiveType = valpress_storefront_shop_archive_type();
+		if ( $archiveType === null ) {
+			return false;
+		}
+
+		$homePageId = Setting::get( 'home_page' );
+		if ( !$homePageId ) {
+			return false;
+		}
+
+		$page = Post::query()->find( $homePageId );
+		if ( !$page || $page->post_status !== 'publish' ) {
+			return false;
+		}
+
+		return (bool)$page->getMeta( '_is_archive' )
+			&& $page->getMeta( '_archive_post_type' ) === $archiveType;
 	}
 }
 
@@ -40,19 +99,8 @@ if ( !function_exists( 'valpress_storefront_catalog_url' ) ) {
 			return route( 'home' );
 		}
 
-		$homePageId = Setting::get( 'home_page' );
-
-		if ( $homePageId ) {
-			$page = Post::query()->find( $homePageId );
-
-			if (
-				$page
-				&& $page->post_status === 'publish'
-				&& $page->getMeta( '_is_archive' )
-				&& $page->getMeta( '_archive_post_type' ) === PageArchiveIntegration::ARCHIVE_TYPE
-			) {
-				return route( 'home' );
-			}
+		if ( valpress_storefront_is_home_shop_archive() ) {
+			return route( 'home' );
 		}
 
 		return route( 'shop.index' );
@@ -86,8 +134,13 @@ if ( !function_exists( 'valpress_storefront_cart_count' ) ) {
 			return 0;
 		}
 
+		$cartServiceClass = 'Plugins\ValPressShop\Services\CartService';
+		if ( !class_exists( $cartServiceClass ) ) {
+			return 0;
+		}
+
 		try {
-			$cart = app( CartService::class )->getOrCreateCart();
+			$cart = app( $cartServiceClass )->getOrCreateCart();
 
 			return (int)$cart->items->sum( 'quantity' );
 		} catch ( Throwable $e ) {
@@ -98,15 +151,44 @@ if ( !function_exists( 'valpress_storefront_cart_count' ) ) {
 
 if ( !function_exists( 'valpress_storefront_shop_categories' ) ) {
 	/**
-	 * @return \Illuminate\Support\Collection<int, Category>
+	 * @return Collection<int, object>
 	 */
-	function valpress_storefront_shop_categories()
+	function valpress_storefront_shop_categories(): Collection
 	{
-		if ( !valpress_storefront_shop_available() || !class_exists( Category::class ) ) {
+		if ( !valpress_storefront_shop_available() ) {
 			return collect();
 		}
 
-		return Category::query()->orderBy( 'sort_order' )->orderBy( 'name' )->get();
+		$categoryClass = 'Plugins\ValPressShop\Models\Category';
+		if ( !class_exists( $categoryClass ) ) {
+			return collect();
+		}
+
+		return $categoryClass::query()->orderBy( 'sort_order' )->orderBy( 'name' )->get();
+	}
+}
+
+if ( !function_exists( 'valpress_storefront_featured_products' ) ) {
+	/**
+	 * @return Collection<int, object>
+	 */
+	function valpress_storefront_featured_products(): Collection
+	{
+		if ( !valpress_storefront_shop_available() || !valpress_storefront_setting_bool( 'show_featured_products' ) ) {
+			return collect();
+		}
+
+		$productClass = 'Plugins\ValPressShop\Models\Product';
+		if ( !class_exists( $productClass ) ) {
+			return collect();
+		}
+
+		return $productClass::query()
+			->published()
+			->with( [ 'defaultVariant', 'categories' ] )
+			->latest()
+			->limit( (int)valpress_storefront_setting( 'featured_products_count', 8 ) )
+			->get();
 	}
 }
 
@@ -139,7 +221,7 @@ add_action( 'valpress_enqueue_scripts', function (): void {
 		'valpress-storefront',
 		asset( 'themes/valpress-storefront/res/css/storefront.css' ),
 		[],
-		'1.0.1'
+		'1.0.2'
 	);
 
 	if ( valpress_storefront_should_load_shop_styles() ) {
@@ -147,7 +229,7 @@ add_action( 'valpress_enqueue_scripts', function (): void {
 			'valpress-storefront-shop',
 			asset( 'themes/valpress-storefront/res/css/shop.css' ),
 			[ 'valpress-storefront' ],
-			'1.0.1'
+			'1.0.2'
 		);
 	}
 } );
@@ -155,7 +237,7 @@ add_action( 'valpress_enqueue_scripts', function (): void {
 add_filter( 'body_classes', function ( array $classes ): array {
 	$classes[] = 'valpress-storefront-theme';
 
-	if ( request()->routeIs( 'shop.*', 'cart.*', 'checkout.*', 'shop.account.*' ) ) {
+	if ( valpress_storefront_shop_available() && request()->routeIs( 'shop.*', 'cart.*', 'checkout.*', 'shop.account.*' ) ) {
 		$classes[] = 'vs-shop-route';
 	}
 
@@ -173,7 +255,7 @@ add_action( 'valpress_render_footer', function (): void {
 } );
 
 add_filter( 'valpress_after_navbar_menu', function ( string $html ): string {
-	if ( !valpress_storefront_shop_available() ) {
+	if ( !valpress_storefront_shop_available() || !Route::has( 'cart.index' ) ) {
 		return $html;
 	}
 
@@ -198,7 +280,11 @@ add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
 	return $items;
 } );
 
-add_filter( 'valpress_shop_products_per_page', function (): int {
+add_filter( 'valpress_shop_products_per_page', function ( mixed $default = 15 ): int {
+	if ( !valpress_storefront_shop_available() ) {
+		return (int)$default;
+	}
+
 	return max( 1, min( 100, (int)valpress_storefront_setting( 'products_per_page', 15 ) ) );
 } );
 
