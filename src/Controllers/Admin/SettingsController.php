@@ -16,7 +16,7 @@ class SettingsController extends Controller
 		AdminMenu::setActive( 'storefront' );
 
 		return view( 'valpress-storefront::admin.settings', [
-			'settings' => StorefrontSettings::all(),
+			'storefrontSettings' => StorefrontSettings::all(),
 		] );
 	}
 
@@ -46,6 +46,6 @@ class SettingsController extends Controller
 
 		return redirect()
 			->route( 'admin.storefront.settings' )
-			->with( 'success', __( 'Storefront settings saved.' ) );
+			->with( 'success', __( 'valpress-storefront::messages.settings_saved' ) );
 	}
 }

@@ -36,13 +36,35 @@ class StorefrontSettings
 	 */
 	public static function all(): array
 	{
+		return array_replace( self::defaults(), self::storedSettings() );
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	protected static function storedSettings(): array
+	{
 		$stored = get_option( self::OPTION_KEY, [] );
 
-		if ( !is_array( $stored ) ) {
-			$stored = [];
+		if ( $stored instanceof \stdClass ) {
+			$stored = (array)$stored;
 		}
 
-		return array_merge( self::defaults(), $stored );
+		if ( !is_array( $stored ) ) {
+			return [];
+		}
+
+		return $stored;
+	}
+
+	/**
+	 * Seed defaults on first use so admin forms always have every key.
+	 */
+	public static function ensureInstalled(): void
+	{
+		if ( get_option( self::OPTION_KEY, false ) === false ) {
+			update_option( self::OPTION_KEY, self::defaults() );
+		}
 	}
 
 	public static function get( string $key, mixed $default = null ): mixed

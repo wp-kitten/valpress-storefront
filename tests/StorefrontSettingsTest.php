@@ -2,6 +2,7 @@
 
 namespace Themes\ValpressStorefront\Tests;
 
+use App\Core\ThemeManager;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,6 +16,8 @@ class StorefrontSettingsTest extends TestCase
 	protected function setUp(): void
 	{
 		parent::setUp();
+
+		app( ThemeManager::class )->bootThemeResources( 'valpress-storefront' );
 
 		Role::firstOrCreate(
 			[ 'slug' => 'administrator' ],
@@ -43,10 +46,27 @@ class StorefrontSettingsTest extends TestCase
 		$this->assertSame( 6, StorefrontSettings::get( 'footer_categories_count' ) );
 	}
 
+	public function test_partial_stored_settings_are_merged_with_defaults(): void
+	{
+		update_option( StorefrontSettings::OPTION_KEY, [
+			'accent_color' => '#111111',
+		] );
+
+		$settings = StorefrontSettings::all();
+
+		$this->assertSame( 15, $settings[ 'products_per_page' ] );
+		$this->assertSame( '#111111', $settings[ 'accent_color' ] );
+	}
+
+	public function test_ensure_installed_seeds_defaults(): void
+	{
+		StorefrontSettings::ensureInstalled();
+
+		$this->assertSame( 15, StorefrontSettings::get( 'products_per_page' ) );
+	}
+
 	public function test_admin_can_open_storefront_settings_when_theme_active(): void
 	{
-		\App\Core\ValPress::registerRoutes( public_path( 'themes/valpress-storefront/routes/admin.php' ) );
-
 		$user = User::factory()->create();
 		$user->assignRole( 'administrator' );
 
@@ -58,8 +78,6 @@ class StorefrontSettingsTest extends TestCase
 
 	public function test_admin_can_save_storefront_settings(): void
 	{
-		\App\Core\ValPress::registerRoutes( public_path( 'themes/valpress-storefront/routes/admin.php' ) );
-
 		$user = User::factory()->create();
 		$user->assignRole( 'administrator' );
 

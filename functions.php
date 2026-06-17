@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Themes\ValpressStorefront\StorefrontSettings;
 
 ValPress::registerViews( __DIR__ . '/views', 'valpress-storefront' );
+ValPress::registerTranslations( __DIR__ . '/lang', 'valpress-storefront' );
 
 if ( !function_exists( 'valpress_storefront_setting' ) ) {
 	function valpress_storefront_setting( string $key, mixed $default = null ): mixed
@@ -166,7 +167,13 @@ if ( !function_exists( 'valpress_storefront_shop_categories' ) ) {
 			return collect();
 		}
 
-		return $categoryClass::query()->orderBy( 'sort_order' )->orderBy( 'name' )->get();
+		$query = $categoryClass::query()->orderBy( 'sort_order' )->orderBy( 'name' );
+
+		if ( class_exists( \Plugins\ValPressShop\Support\ShopI18n::class ) ) {
+			$query = \Plugins\ValPressShop\Support\ShopI18n::applyStorefrontCategoryLocaleFilter( $query );
+		}
+
+		return $query->get();
 	}
 }
 
@@ -185,12 +192,17 @@ if ( !function_exists( 'valpress_storefront_featured_products' ) ) {
 			return collect();
 		}
 
-		return $productClass::query()
+		$query = $productClass::query()
 			->published()
 			->with( [ 'defaultVariant', 'categories' ] )
 			->latest()
-			->limit( (int)valpress_storefront_setting( 'featured_products_count', 8 ) )
-			->get();
+			->limit( (int)valpress_storefront_setting( 'featured_products_count', 8 ) );
+
+		if ( class_exists( \Plugins\ValPressShop\Support\ShopI18n::class ) ) {
+			$query = \Plugins\ValPressShop\Support\ShopI18n::applyStorefrontLocaleFilter( $query );
+		}
+
+		return $query->get();
 	}
 }
 
@@ -298,6 +310,8 @@ if ( !function_exists( 'valpress_storefront_render_footer_menu' ) ) {
 }
 
 add_action( 'after_setup_theme', function (): void {
+	StorefrontSettings::ensureInstalled();
+
 	if ( class_exists( MenuManager::class ) ) {
 		MenuManager::registerMenuLocation( 'storefront_store', __( 'Store Footer Navigation' ) );
 	}
@@ -383,7 +397,7 @@ add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
 
 	$items[ 'storefront' ] = [
 		'id' => 'storefront',
-		'title' => __( 'Storefront' ),
+		'title' => __( 'valpress-storefront::messages.menu_title' ),
 		'url' => '#',
 		'icon' => 'bi-shop-window',
 		'order' => 31,
@@ -393,7 +407,7 @@ add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
 
 	$items[ 'storefront_settings' ] = [
 		'id' => 'storefront_settings',
-		'title' => __( 'Settings' ),
+		'title' => __( 'valpress-storefront::messages.settings' ),
 		'url' => fn () => route( 'admin.storefront.settings' ),
 		'icon' => 'bi-circle',
 		'order' => 5,
