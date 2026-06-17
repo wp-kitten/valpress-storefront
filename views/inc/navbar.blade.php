@@ -10,23 +10,9 @@
         </button>
 
         <div class="collapse navbar-collapse" id="vsNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link @if(is_home()) active @endif" href="{{ route('home') }}">{{ __('Home') }}</a>
-                </li>
-                @if(valpress_storefront_shop_available())
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->routeIs('shop.*') && !request()->routeIs('shop.account.*')) active @endif" href="{{ valpress_storefront_catalog_url() }}">{{ __('Shop') }}</a>
-                    </li>
-                @endif
-                @if(class_exists('App\Core\MenuManager'))
-                    {!! App\Core\MenuManager::renderMenu('primary', ['container_class' => 'navbar-nav']) !!}
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link @if(is_blog()) active @endif" href="{{ route('blog') }}">{{ __('Blog') }}</a>
-                    </li>
-                @endif
-            </ul>
+            {!! apply_filters('valpress_before_navbar_menu', '') !!}
+
+            {!! valpress_storefront_render_primary_nav() !!}
 
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 @include('valpress-storefront::partials.search-form', ['class' => 'vs-nav-search'])

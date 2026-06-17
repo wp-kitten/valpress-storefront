@@ -1,7 +1,9 @@
 <?php
 
+use App\Core\MenuManager;
 use App\Core\ScriptManager;
 use App\Core\ValPress;
+use App\Models\Menu;
 use App\Models\Post;
 use App\Models\Setting;
 use Illuminate\Support\Collection;
@@ -232,6 +234,74 @@ if ( !function_exists( 'valpress_storefront_favicon' ) ) {
 		);
 	}
 }
+
+if ( !function_exists( 'valpress_storefront_has_nav_menu' ) ) {
+	function valpress_storefront_has_nav_menu( string $location ): bool
+	{
+		if ( !class_exists( Menu::class ) ) {
+			return false;
+		}
+
+		$menu = Menu::query()->where( 'location', $location )->with( 'items' )->first();
+		if ( !$menu || $menu->items->isEmpty() ) {
+			return false;
+		}
+
+		return true;
+	}
+}
+
+if ( !function_exists( 'valpress_storefront_render_primary_nav' ) ) {
+	function valpress_storefront_render_primary_nav(): string
+	{
+		if ( class_exists( MenuManager::class ) ) {
+			$html = trim( MenuManager::renderMenu( 'primary', [
+				'container_class' => 'navbar-nav me-auto mb-2 mb-lg-0',
+				'item_class' => 'nav-item',
+				'link_class' => 'nav-link',
+			] ) );
+
+			if ( $html !== '' ) {
+				return $html;
+			}
+		}
+
+		return view( 'valpress-storefront::partials.nav-fallback' )->render();
+	}
+}
+
+if ( !function_exists( 'valpress_storefront_render_footer_menu' ) ) {
+	function valpress_storefront_render_footer_menu( string $location, ?string $fallbackView = null ): string
+	{
+		$args = apply_filters( 'valpress_storefront_footer_menu_args', [
+			'container' => 'ul',
+			'container_class' => 'vs-footer-links',
+			'item_class' => '',
+			'link_class' => '',
+		], $location );
+
+		$html = '';
+		if ( class_exists( MenuManager::class ) ) {
+			$html = trim( MenuManager::renderMenu( $location, $args ) );
+		}
+
+		if ( $html !== '' ) {
+			return $html;
+		}
+
+		if ( $fallbackView !== null ) {
+			return view( $fallbackView )->render();
+		}
+
+		return '';
+	}
+}
+
+add_action( 'after_setup_theme', function (): void {
+	if ( class_exists( MenuManager::class ) ) {
+		MenuManager::registerMenuLocation( 'storefront_store', __( 'Store Footer Navigation' ) );
+	}
+} );
 
 add_action( 'valpress_enqueue_scripts', function (): void {
 	ScriptManager::enqueueScript(

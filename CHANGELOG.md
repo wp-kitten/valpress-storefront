@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.1 — 2026-06-15
+
+### Navigation
+- Primary navbar uses the **Primary Navigation** menu location (`primary`) via `MenuManager`, matching the default theme pattern
+- Footer **Site** column uses the core **Footer Navigation** location (`footer`)
+- Registered theme-specific **Store Footer Navigation** location (`storefront_store`) for the store footer column
+- Sensible fallbacks (Home, Shop, Blog, cart links) when no menu is assigned to a location
+- Helpers: `valpress_storefront_has_nav_menu()`, `valpress_storefront_render_primary_nav()`, `valpress_storefront_render_footer_menu()`
+
 ## 1.2.0 — 2026-06-15
 
 Visual refresh and UX improvements across the storefront.
