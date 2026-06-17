@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.1 — 2026-06-15
+## 1.2.1 — 2026-06-17
 
 ### Navigation
 - Primary navbar uses the **Primary Navigation** menu location (`primary`) via `MenuManager`, matching the default theme pattern
