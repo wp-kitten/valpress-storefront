@@ -19,34 +19,19 @@
 
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-header bg-white">
-                <h2 class="h5 mb-0">{{ __('valpress-storefront::messages.layout') }}</h2>
+                <h2 class="h5 mb-0">{{ __('valpress-storefront::messages.catalog') }}</h2>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label for="container_max_width" class="form-label fw-bold">{{ __('valpress-storefront::messages.container_max_width') }}</label>
-                        <input type="number" min="960" max="1600" name="container_max_width" id="container_max_width" class="form-control @error('container_max_width') is-invalid @enderror" value="{{ old('container_max_width', $storefrontSettings['container_max_width'] ?? 1200) }}" required>
-                        @error('container_max_width')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="product_grid_min_width" class="form-label fw-bold">{{ __('valpress-storefront::messages.product_grid_min_width') }}</label>
-                        <input type="number" min="160" max="400" name="product_grid_min_width" id="product_grid_min_width" class="form-control @error('product_grid_min_width') is-invalid @enderror" value="{{ old('product_grid_min_width', $storefrontSettings['product_grid_min_width'] ?? 240) }}" required>
-                        @error('product_grid_min_width')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="product_excerpt_length" class="form-label fw-bold">{{ __('valpress-storefront::messages.product_excerpt_length') }}</label>
-                        <input type="number" min="20" max="500" name="product_excerpt_length" id="product_excerpt_length" class="form-control @error('product_excerpt_length') is-invalid @enderror" value="{{ old('product_excerpt_length', $storefrontSettings['product_excerpt_length'] ?? 90) }}" required>
-                        @error('product_excerpt_length')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label for="footer_categories_count" class="form-label fw-bold">{{ __('valpress-storefront::messages.footer_categories_count') }}</label>
                         <input type="number" min="0" max="24" name="footer_categories_count" id="footer_categories_count" class="form-control @error('footer_categories_count') is-invalid @enderror" value="{{ old('footer_categories_count', $storefrontSettings['footer_categories_count'] ?? 6) }}" required>
                         @error('footer_categories_count')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="border_radius" class="form-label fw-bold">{{ __('valpress-storefront::messages.border_radius') }}</label>
-                        <input type="text" name="border_radius" id="border_radius" class="form-control @error('border_radius') is-invalid @enderror" value="{{ old('border_radius', $storefrontSettings['border_radius'] ?? '1rem') }}" placeholder="1rem" required>
-                        @error('border_radius')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="col-md-6 mb-3">
+                        <label for="product_excerpt_length" class="form-label fw-bold">{{ __('valpress-storefront::messages.product_excerpt_length') }}</label>
+                        <input type="number" min="20" max="500" name="product_excerpt_length" id="product_excerpt_length" class="form-control @error('product_excerpt_length') is-invalid @enderror" value="{{ old('product_excerpt_length', $storefrontSettings['product_excerpt_length'] ?? 90) }}" required>
+                        @error('product_excerpt_length')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
             </div>

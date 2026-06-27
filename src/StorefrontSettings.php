@@ -15,12 +15,9 @@ class StorefrontSettings
 			'featured_products_count' => 8,
 			'footer_categories_count' => 6,
 			'product_excerpt_length' => 90,
-			'product_grid_min_width' => 240,
-			'container_max_width' => 1200,
 			'accent_color' => '#0d9488',
 			'accent_dark_color' => '#0f766e',
 			'accent_soft_color' => '#ccfbf1',
-			'border_radius' => '1rem',
 			'hero_gradient_start' => '#0f172a',
 			'hero_gradient_mid' => '#134e4a',
 			'hero_gradient_end' => '#0d9488',
@@ -37,7 +34,7 @@ class StorefrontSettings
 	{
 		$settings = array_replace( self::defaults(), self::storedSettings() );
 
-		unset( $settings[ 'products_per_page' ] );
+		unset( $settings[ 'products_per_page' ], $settings[ 'container_max_width' ], $settings[ 'product_grid_min_width' ], $settings[ 'border_radius' ] );
 
 		return $settings;
 	}
@@ -106,12 +103,9 @@ class StorefrontSettings
 		return [
 			'footer_categories_count',
 			'product_excerpt_length',
-			'product_grid_min_width',
-			'container_max_width',
 			'accent_color',
 			'accent_dark_color',
 			'accent_soft_color',
-			'border_radius',
 			'hero_gradient_start',
 			'hero_gradient_mid',
 			'hero_gradient_end',

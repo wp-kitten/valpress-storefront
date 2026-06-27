@@ -539,17 +539,7 @@ body.valpress-storefront-theme .btn-outline-primary:hover {
 	box-shadow: var(--vs-shadow-sm);
 }
 
-/* Product grid */
-.vps-product-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(var(--vs-product-grid-min, 240px), 1fr));
-	gap: 1.5rem;
-}
-
-.vps-product-grid-empty {
-	grid-column: 1 / -1;
-}
-
+/* Product cards */
 .vps-product-card,
 .vs-product-card {
 	background: var(--vs-surface);

@@ -18,23 +18,25 @@ class StorefrontSettingsTest extends TestCase
 		app( ThemeManager::class )->bootThemeResources( 'valpress-storefront' );
 	}
 
-	public function test_defaults_include_theme_layout_settings(): void
+	public function test_defaults_include_theme_color_settings(): void
 	{
 		$defaults = StorefrontSettings::defaults();
 
-		$this->assertSame( 1200, $defaults[ 'container_max_width' ] );
 		$this->assertSame( '#0d9488', $defaults[ 'accent_color' ] );
+		$this->assertSame( 90, $defaults[ 'product_excerpt_length' ] );
 		$this->assertArrayNotHasKey( 'products_per_page', $defaults );
+		$this->assertArrayNotHasKey( 'container_max_width', $defaults );
+		$this->assertArrayNotHasKey( 'product_grid_min_width', $defaults );
 	}
 
 	public function test_settings_can_be_saved_and_retrieved(): void
 	{
 		StorefrontSettings::save( [
-			'container_max_width' => 1280,
+			'product_excerpt_length' => 120,
 			'accent_color' => '#112233',
 		] );
 
-		$this->assertSame( 1280, StorefrontSettings::get( 'container_max_width' ) );
+		$this->assertSame( 120, StorefrontSettings::get( 'product_excerpt_length' ) );
 		$this->assertSame( '#112233', StorefrontSettings::get( 'accent_color' ) );
 		$this->assertSame( 6, StorefrontSettings::get( 'footer_categories_count' ) );
 	}
@@ -47,21 +49,23 @@ class StorefrontSettingsTest extends TestCase
 
 		$settings = StorefrontSettings::all();
 
-		$this->assertSame( 1200, $settings[ 'container_max_width' ] );
+		$this->assertSame( 90, $settings[ 'product_excerpt_length' ] );
 		$this->assertSame( '#111111', $settings[ 'accent_color' ] );
+		$this->assertArrayNotHasKey( 'container_max_width', $settings );
 	}
 
 	public function test_ensure_installed_seeds_defaults(): void
 	{
 		StorefrontSettings::ensureInstalled();
 
-		$this->assertSame( 1200, StorefrontSettings::get( 'container_max_width' ) );
+		$this->assertSame( 6, StorefrontSettings::get( 'footer_categories_count' ) );
+		$this->assertSame( '#0d9488', StorefrontSettings::get( 'accent_color' ) );
 	}
 
 	public function test_homepage_runtime_defaults_remain_available(): void
 	{
 		StorefrontSettings::save( [
-			'container_max_width' => 1400,
+			'accent_color' => '#123456',
 		] );
 
 		$this->assertTrue( StorefrontSettings::bool( 'show_home_hero' ) );

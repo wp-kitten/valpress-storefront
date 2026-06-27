@@ -29,7 +29,7 @@
                 @endforelse
             </div>
 
-            <div class="mt-4 d-flex justify-content-center">
+            <div class="mt-4 vs-pagination">
                 {{ $posts->links() }}
             </div>
         </div>

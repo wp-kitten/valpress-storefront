@@ -1,7 +1,8 @@
 @extends('valpress-storefront::layouts.storefront')
 
 @section('storefront_content')
-    <div class="vps-shop vs-shop">
+    <div class="container py-4">
+        <div class="vs-shop">
         @if(empty($category))
             <div class="vs-shop-hero">
                 <div class="vs-shop-hero-inner">
@@ -14,5 +15,6 @@
         @include('valpress-storefront::partials.shop-page-header', ['products' => $products, 'category' => $category ?? null])
 
         @include('valpress-shop::storefront.shop.partials.product-grid', ['products' => $products])
+        </div>
     </div>
 @endsection

@@ -1,10 +1,11 @@
 @extends('valpress-storefront::layouts.storefront')
 
 @section('storefront_content')
-    <div class="vps-shop vs-shop">
-        @include('valpress-storefront::partials.category-nav')
+    @include('valpress-storefront::partials.category-nav')
 
-        <div class="vs-shop-toolbar mt-2 mb-4">
+    <div class="container py-4">
+        <div class="vs-shop">
+            <div class="vs-shop-toolbar mt-2 mb-4">
             <div class="vs-shop-toolbar-main">
                 @php
                     $breadcrumbItems = [
@@ -120,5 +121,6 @@
                 @endif
             </div>
         </div>
+    </div>
     </div>
 @endsection

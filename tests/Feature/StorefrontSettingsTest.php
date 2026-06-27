@@ -40,8 +40,10 @@ class StorefrontSettingsTest extends TestCase
 		$this->actingAs( $user )
 			->get( route( 'admin.storefront.settings' ) )
 			->assertOk()
-			->assertSee( 'Content max width' )
+			->assertSee( 'Product excerpt length' )
 			->assertSee( 'Accent color' )
+			->assertDontSee( 'Content max width' )
+			->assertDontSee( 'Product card min width' )
 			->assertDontSee( 'Homepage' )
 			->assertDontSee( 'Home Page' )
 			->assertDontSee( 'Posts per page' )
@@ -54,14 +56,14 @@ class StorefrontSettingsTest extends TestCase
 		$user->assignRole( 'administrator' );
 
 		$payload = array_intersect_key( StorefrontSettings::defaults(), array_flip( StorefrontSettings::adminKeys() ) );
-		$payload[ 'container_max_width' ] = 1400;
+		$payload[ 'product_excerpt_length' ] = 110;
 		$payload[ 'accent_color' ] = '#123456';
 
 		$this->actingAs( $user )
 			->post( route( 'admin.storefront.settings.store' ), $payload )
 			->assertRedirect( route( 'admin.storefront.settings' ) );
 
-		$this->assertSame( 1400, StorefrontSettings::get( 'container_max_width' ) );
+		$this->assertSame( 110, StorefrontSettings::get( 'product_excerpt_length' ) );
 		$this->assertSame( '#123456', StorefrontSettings::get( 'accent_color' ) );
 	}
 

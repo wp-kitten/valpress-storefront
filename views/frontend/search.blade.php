@@ -42,7 +42,7 @@
 
                     @include('valpress-shop::storefront.shop.partials.product-grid', ['products' => $products, 'hidePagination' => true])
 
-                    <div class="mt-4 d-flex justify-content-center">
+                    <div class="mt-4 vs-pagination">
                         {{ $products->links() }}
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-4 d-flex justify-content-center">
+                    <div class="mt-4 vs-pagination">
                         {{ $posts->links() }}
                     </div>
                 </div>
