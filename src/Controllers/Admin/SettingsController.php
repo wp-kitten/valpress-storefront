@@ -13,7 +13,7 @@ class SettingsController extends Controller
 {
 	public function index(): View
 	{
-		AdminMenu::setActive( 'storefront' );
+		AdminMenu::setActive( 'settings-storefront' );
 
 		return view( 'valpress-storefront::admin.storefront-settings', [
 			'storefrontSettings' => StorefrontSettings::all(),

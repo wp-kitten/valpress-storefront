@@ -28,6 +28,9 @@ if ( !function_exists( 'valpress_storefront_setting_bool' ) ) {
 }
 
 if ( !function_exists( 'valpress_storefront_shop_plugin_class' ) ) {
+	/**
+	 * @return class-string<\Plugins\ValPressShop\Plugin>|null
+	 */
 	function valpress_storefront_shop_plugin_class(): ?string
 	{
 		$class = 'Plugins\ValPressShop\Plugin';
@@ -48,7 +51,7 @@ if ( !function_exists( 'valpress_storefront_shop_available' ) ) {
 			return false;
 		}
 
-		if ( !$pluginClass::isEnabled() ) {
+		if ( !method_exists( $pluginClass, 'isEnabled' ) || !call_user_func( [ $pluginClass, 'isEnabled' ] ) ) {
 			return false;
 		}
 
@@ -395,24 +398,14 @@ add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
 		return $items;
 	}
 
-	$items[ 'storefront' ] = [
-		'id' => 'storefront',
-		'title' => __( 'valpress-storefront::messages.menu_title' ),
-		'url' => '#',
-		'icon' => 'bi-shop-window',
-		'order' => 31,
-		'parent' => null,
-		'permission' => 'manage_themes',
-	];
-
-	$items[ 'storefront_settings' ] = [
-		'id' => 'storefront_settings',
-		'title' => __( 'valpress-storefront::messages.settings' ),
+	$items[ 'settings-storefront' ] = [
+		'id' => 'settings-storefront',
+		'title' => __( 'valpress-storefront::messages.settings_title' ),
 		'url' => fn () => route( 'admin.storefront.settings' ),
 		'icon' => 'bi-circle',
-		'order' => 5,
-		'parent' => 'storefront',
-		'permission' => 'manage_themes',
+		'order' => 40,
+		'parent' => 'settings',
+		'permission' => 'manage_options',
 	];
 
 	return $items;
