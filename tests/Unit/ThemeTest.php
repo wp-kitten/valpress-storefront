@@ -1,6 +1,6 @@
 <?php
 
-namespace Themes\ValpressStorefront\Tests;
+namespace Themes\ValpressStorefront\Tests\Unit;
 
 use App\Core\ThemeManager;
 use Tests\TestCase;
