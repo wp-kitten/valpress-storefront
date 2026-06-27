@@ -14,6 +14,8 @@
 
     <p class="text-muted mb-4">{{ __('valpress-storefront::messages.settings_intro') }}</p>
 
+    @php do_action('valpress_storefront_admin_settings_before', $storefrontSettings); @endphp
+
     <form method="POST" action="{{ route('admin.storefront.settings.store') }}">
         @csrf
 
@@ -77,6 +79,10 @@
             </div>
         </div>
 
+        @php do_action('valpress_storefront_admin_settings_form_fields', $storefrontSettings); @endphp
+
         <button type="submit" class="btn btn-primary">{{ __('valpress-storefront::messages.save_settings') }}</button>
     </form>
+
+    @php do_action('valpress_storefront_admin_settings_after', $storefrontSettings); @endphp
 @endsection

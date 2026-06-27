@@ -100,7 +100,7 @@ class StorefrontSettings
 	 */
 	public static function adminKeys(): array
 	{
-		return [
+		$keys = [
 			'footer_categories_count',
 			'product_excerpt_length',
 			'accent_color',
@@ -110,6 +110,8 @@ class StorefrontSettings
 			'hero_gradient_mid',
 			'hero_gradient_end',
 		];
+
+		return apply_filters( 'valpress_storefront_admin_settings_keys', $keys );
 	}
 
 	public static function bool( string $key ): bool

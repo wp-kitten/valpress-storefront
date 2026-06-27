@@ -22,7 +22,7 @@ class SettingsController extends Controller
 
 	public function store( Request $request ): RedirectResponse
 	{
-		$data = $request->validate( [
+		$rules = [
 			'footer_categories_count' => 'required|integer|min:0|max:24',
 			'product_excerpt_length' => 'required|integer|min:20|max:500',
 			'accent_color' => [ 'required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/' ],
@@ -31,9 +31,17 @@ class SettingsController extends Controller
 			'hero_gradient_start' => [ 'required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/' ],
 			'hero_gradient_mid' => [ 'required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/' ],
 			'hero_gradient_end' => [ 'required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/' ],
-		] );
+		];
+
+		$rules = apply_filters( 'valpress_storefront_admin_settings_validation_rules', $rules, $request );
+
+		$data = $request->validate( $rules );
+
+		$data = apply_filters( 'valpress_storefront_admin_settings_before_save', $data, $request );
 
 		StorefrontSettings::save( $data );
+
+		do_action( 'valpress_storefront_admin_settings_save', $request, $data );
 
 		return redirect()
 			->route( 'admin.storefront.settings' )
