@@ -15,7 +15,7 @@ class SettingsController extends Controller
 	{
 		AdminMenu::setActive( 'storefront' );
 
-		return view( 'valpress-storefront::admin.settings', [
+		return view( 'valpress-storefront::admin.storefront-settings', [
 			'storefrontSettings' => StorefrontSettings::all(),
 		] );
 	}
@@ -23,8 +23,6 @@ class SettingsController extends Controller
 	public function store( Request $request ): RedirectResponse
 	{
 		$data = $request->validate( [
-			'products_per_page' => 'required|integer|min:1|max:100',
-			'featured_products_count' => 'required|integer|min:0|max:48',
 			'footer_categories_count' => 'required|integer|min:0|max:24',
 			'product_excerpt_length' => 'required|integer|min:20|max:500',
 			'product_grid_min_width' => 'required|integer|min:160|max:400',
@@ -38,11 +36,7 @@ class SettingsController extends Controller
 			'hero_gradient_end' => [ 'required', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/' ],
 		] );
 
-		StorefrontSettings::save( array_merge( $data, [
-			'show_home_hero' => $request->boolean( 'show_home_hero' ),
-			'show_featured_products' => $request->boolean( 'show_featured_products' ),
-			'show_hero_blog_button' => $request->boolean( 'show_hero_blog_button' ),
-		] ) );
+		StorefrontSettings::save( $data );
 
 		return redirect()
 			->route( 'admin.storefront.settings' )

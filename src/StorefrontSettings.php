@@ -12,7 +12,6 @@ class StorefrontSettings
 	public static function defaults(): array
 	{
 		return [
-			'products_per_page' => 15,
 			'featured_products_count' => 8,
 			'footer_categories_count' => 6,
 			'product_excerpt_length' => 90,
@@ -36,7 +35,11 @@ class StorefrontSettings
 	 */
 	public static function all(): array
 	{
-		return array_replace( self::defaults(), self::storedSettings() );
+		$settings = array_replace( self::defaults(), self::storedSettings() );
+
+		unset( $settings[ 'products_per_page' ] );
+
+		return $settings;
 	}
 
 	/**
@@ -83,9 +86,36 @@ class StorefrontSettings
 	 */
 	public static function save( array $values ): void
 	{
-		$merged = array_merge( self::all(), $values );
+		$persisted = array_intersect_key(
+			array_merge( self::all(), $values ),
+			array_flip( self::adminKeys() )
+		);
 
-		update_option( self::OPTION_KEY, $merged );
+		$runtime = array_diff_key( self::defaults(), array_flip( self::adminKeys() ) );
+
+		update_option( self::OPTION_KEY, array_merge( $runtime, $persisted ) );
+	}
+
+	/**
+	 * Settings exposed in the Storefront admin settings form.
+	 *
+	 * @return list<string>
+	 */
+	public static function adminKeys(): array
+	{
+		return [
+			'footer_categories_count',
+			'product_excerpt_length',
+			'product_grid_min_width',
+			'container_max_width',
+			'accent_color',
+			'accent_dark_color',
+			'accent_soft_color',
+			'border_radius',
+			'hero_gradient_start',
+			'hero_gradient_mid',
+			'hero_gradient_end',
+		];
 	}
 
 	public static function bool( string $key ): bool

@@ -222,7 +222,7 @@ if ( !function_exists( 'valpress_storefront_search_products' ) ) {
 			return null;
 		}
 
-		$perPage ??= max( 1, min( 100, (int)valpress_storefront_setting( 'products_per_page', 15 ) ) );
+		$perPage ??= valpress_storefront_products_per_page();
 
 		return app( $searchServiceClass )->search( [
 			'q' => $query,
@@ -418,13 +418,19 @@ add_filter( 'valpress_admin_menu_items', function ( array $items ): array {
 	return $items;
 } );
 
-add_filter( 'valpress_shop_products_per_page', function ( mixed $default = 15 ): int {
-	if ( !valpress_storefront_shop_available() ) {
-		return (int)$default;
-	}
+if ( !function_exists( 'valpress_storefront_products_per_page' ) ) {
+	function valpress_storefront_products_per_page(): int
+	{
+		if ( valpress_storefront_shop_available() ) {
+			$pluginClass = valpress_storefront_shop_plugin_class();
+			if ( $pluginClass !== null && method_exists( $pluginClass, 'productsPerPage' ) ) {
+				return $pluginClass::productsPerPage();
+			}
+		}
 
-	return max( 1, min( 100, (int)valpress_storefront_setting( 'products_per_page', 15 ) ) );
-} );
+		return max( 1, min( 100, (int)apply_filters( 'valpress_shop_products_per_page', 15 ) ) );
+	}
+}
 
 add_action( 'valpress_head', function (): void {
 	if ( is_admin() ) {

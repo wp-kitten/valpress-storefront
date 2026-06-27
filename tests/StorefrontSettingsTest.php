@@ -25,24 +25,24 @@ class StorefrontSettingsTest extends TestCase
 		);
 	}
 
-	public function test_defaults_include_catalog_settings(): void
+	public function test_defaults_include_theme_layout_settings(): void
 	{
 		$defaults = StorefrontSettings::defaults();
 
-		$this->assertSame( 15, $defaults[ 'products_per_page' ] );
-		$this->assertSame( 8, $defaults[ 'featured_products_count' ] );
-		$this->assertSame( 6, $defaults[ 'footer_categories_count' ] );
+		$this->assertSame( 1200, $defaults[ 'container_max_width' ] );
+		$this->assertSame( '#0d9488', $defaults[ 'accent_color' ] );
+		$this->assertArrayNotHasKey( 'products_per_page', $defaults );
 	}
 
 	public function test_settings_can_be_saved_and_retrieved(): void
 	{
 		StorefrontSettings::save( [
-			'products_per_page' => 20,
-			'featured_products_count' => 4,
+			'container_max_width' => 1280,
+			'accent_color' => '#112233',
 		] );
 
-		$this->assertSame( 20, StorefrontSettings::get( 'products_per_page' ) );
-		$this->assertSame( 4, StorefrontSettings::get( 'featured_products_count' ) );
+		$this->assertSame( 1280, StorefrontSettings::get( 'container_max_width' ) );
+		$this->assertSame( '#112233', StorefrontSettings::get( 'accent_color' ) );
 		$this->assertSame( 6, StorefrontSettings::get( 'footer_categories_count' ) );
 	}
 
@@ -54,7 +54,7 @@ class StorefrontSettingsTest extends TestCase
 
 		$settings = StorefrontSettings::all();
 
-		$this->assertSame( 15, $settings[ 'products_per_page' ] );
+		$this->assertSame( 1200, $settings[ 'container_max_width' ] );
 		$this->assertSame( '#111111', $settings[ 'accent_color' ] );
 	}
 
@@ -62,7 +62,7 @@ class StorefrontSettingsTest extends TestCase
 	{
 		StorefrontSettings::ensureInstalled();
 
-		$this->assertSame( 15, StorefrontSettings::get( 'products_per_page' ) );
+		$this->assertSame( 1200, StorefrontSettings::get( 'container_max_width' ) );
 	}
 
 	public function test_admin_can_open_storefront_settings_when_theme_active(): void
@@ -73,7 +73,12 @@ class StorefrontSettingsTest extends TestCase
 		$this->actingAs( $user )
 			->get( route( 'admin.storefront.settings' ) )
 			->assertOk()
-			->assertSee( 'Products per page' );
+			->assertSee( 'Content max width' )
+			->assertSee( 'Accent color' )
+			->assertDontSee( 'Homepage' )
+			->assertDontSee( 'Home Page' )
+			->assertDontSee( 'Posts per page' )
+			->assertDontSee( 'Show homepage hero' );
 	}
 
 	public function test_admin_can_save_storefront_settings(): void
@@ -81,18 +86,25 @@ class StorefrontSettingsTest extends TestCase
 		$user = User::factory()->create();
 		$user->assignRole( 'administrator' );
 
-		$payload = array_merge( StorefrontSettings::defaults(), [
-			'products_per_page' => 30,
-			'show_home_hero' => '1',
-			'show_featured_products' => '1',
-			'show_hero_blog_button' => '0',
-		] );
+		$payload = array_intersect_key( StorefrontSettings::defaults(), array_flip( StorefrontSettings::adminKeys() ) );
+		$payload[ 'container_max_width' ] = 1400;
+		$payload[ 'accent_color' ] = '#123456';
 
 		$this->actingAs( $user )
 			->post( route( 'admin.storefront.settings.store' ), $payload )
 			->assertRedirect( route( 'admin.storefront.settings' ) );
 
-		$this->assertSame( 30, StorefrontSettings::get( 'products_per_page' ) );
-		$this->assertFalse( StorefrontSettings::bool( 'show_hero_blog_button' ) );
+		$this->assertSame( 1400, StorefrontSettings::get( 'container_max_width' ) );
+		$this->assertSame( '#123456', StorefrontSettings::get( 'accent_color' ) );
+	}
+
+	public function test_homepage_runtime_defaults_remain_available(): void
+	{
+		StorefrontSettings::save( [
+			'container_max_width' => 1400,
+		] );
+
+		$this->assertTrue( StorefrontSettings::bool( 'show_home_hero' ) );
+		$this->assertSame( 8, StorefrontSettings::get( 'featured_products_count' ) );
 	}
 }
