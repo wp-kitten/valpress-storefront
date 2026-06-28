@@ -3,6 +3,8 @@
 @section('storefront_content')
     @include('valpress-storefront::partials.category-nav')
 
+    @php do_action('valpress_shop_product_show_before', $product); @endphp
+
     <div class="container py-4">
         <div class="vs-shop">
             <div class="vs-shop-toolbar mt-2 mb-4">
@@ -41,7 +43,14 @@
 
         <div class="vs-product-detail">
             <div class="vs-product-detail-image">
-                @if($product->imageUrl())
+                @php
+                    ob_start();
+                    do_action('valpress_shop_product_show_gallery', $product);
+                    $galleryOutput = ob_get_clean();
+                @endphp
+                @if($galleryOutput !== '')
+                    {!! $galleryOutput !!}
+                @elseif($product->imageUrl())
                     <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}">
                 @else
                     <div class="d-flex align-items-center justify-content-center p-5 text-muted" style="min-height:320px;">
@@ -51,6 +60,7 @@
             </div>
 
             <div class="vs-product-detail-panel">
+                @php do_action('valpress_shop_product_show_summary_before', $product); @endphp
                 @if($product->categories->isNotEmpty())
                     <div class="small text-uppercase fw-semibold text-muted mb-2" style="letter-spacing:0.05em;">
                         {{ $product->categories->pluck('name')->join(' · ') }}
@@ -75,6 +85,8 @@
                         </div>
                     @endif
                 @endif
+
+                @php do_action('valpress_shop_product_show_add_to_cart_before', $product); @endphp
 
                 <form action="{{ route('cart.add') }}" method="POST" class="row g-3 align-items-end">
                     @csrf
@@ -116,11 +128,18 @@
                 @if($product->description)
                     <div class="mt-4 pt-4 border-top">
                         <h2 class="h6 fw-bold text-uppercase mb-3" style="letter-spacing:0.05em;">{{ __('Description') }}</h2>
-                        <div class="text-muted">{!! nl2br(e($product->description)) !!}</div>
+                        <div class="text-muted vs-product-description">{!! apply_filters('valpress_shop_product_description_html', $product->description ?? '', $product) !!}</div>
                     </div>
                 @endif
             </div>
         </div>
+
+        @php do_action('valpress_shop_product_show_detailed_description', $product); @endphp
+        @php do_action('valpress_shop_product_show_videos', $product); @endphp
+        @php do_action('valpress_shop_product_show_description_after', $product); @endphp
+        @php do_action('valpress_shop_product_show_extended_content', $product); @endphp
     </div>
     </div>
+
+    @php do_action('valpress_shop_product_show_after', $product); @endphp
 @endsection

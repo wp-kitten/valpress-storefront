@@ -13,6 +13,7 @@
             $onSale = $variant && $variant->compare_at_price && (float) $variant->compare_at_price > (float) $variant->price;
         @endphp
         <div class="col">
+            @php do_action('valpress_shop_product_card_before', $product); @endphp
             <article class="vps-product-card vs-product-card h-100">
                 <a href="{{ route('shop.show', $product) }}" class="vs-product-media d-block text-decoration-none">
                     @if($onSale)
@@ -52,6 +53,7 @@
                     </a>
                 </div>
             </article>
+            @php do_action('valpress_shop_product_card_after', $product); @endphp
         </div>
     @empty
         <div class="col-12">
